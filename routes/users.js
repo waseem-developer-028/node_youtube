@@ -7,11 +7,9 @@ const {
   createUser,
   updateUser,
   deleteUser,
-  getProducts,
 } = require("../controller/user.controller");
 
 // Example route
-router.get("/products", getProducts);
 router.get("/", getUsers);
 router.get("/:id", getUserById);
 router.post("/", createUser);

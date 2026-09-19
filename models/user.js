@@ -31,19 +31,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-userSchema.virtual("profile", {
-  ref: "Profile",
-  localField: "_id",
-  foreignField: "userId",
-  justOne: true,
-});
-
-userSchema.virtual("orders", {
-  ref: "Order",
-  localField: "_id",
-  foreignField: "userId",
-});
-
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return;

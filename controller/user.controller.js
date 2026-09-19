@@ -1,4 +1,4 @@
-const { User, Profile, Order, Product, Category } = require("../models");
+const { User } = require("../models");
 const { faker } = require("@faker-js/faker");
 
 const getUsers = async (req, res) => {
@@ -7,55 +7,20 @@ const getUsers = async (req, res) => {
     page = parseInt(page) ?? 1;
     const limit = 5;
     const skip = (page - 1) * limit;
-    // const users = await User.aggregate([
-    //   {
-    //     $match: {
-    //       age: { $gt: 25 },
-    //     },
-    //   },
+    for (let i = 0; i < 100; i++) {
+      await User.create({
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+        age: faker.number.int({ min: 18, max: 65 }),
+        city: faker.location.city(),
+      });
+    }
+    const users = await User.find().skip(skip).limit(limit);
 
-    //   {
-    //     $sort: { age: -1 },
-    //   },
-    //   {
-    //     $skip: skip,
-    //   },
-    //   {
-    //     $limit: limit,
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 0,
-    //       age: 1,
-    //       name: 1,
-    //     },
-    //   },
-    // ]);
-
-    const users = await Order.aggregate([
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user",
-        },
-      },
-      {
-        $unwind: "$user",
-      },
-      {
-        $project: {
-          _id: 0,
-          "user.name": 1,
-          "user.email": 1,
-          amount: 1,
-          status: 1,
-        },
-      },
-    ]);
-
-    res.status(200).json(users);
+    res
+      .status(200)
+      .json({ message: "Users retrieved successfully", data: users });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -63,15 +28,7 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
-      .populate({
-        path: "profile",
-        select: "-_id -userId phone address",
-      })
-      .populate({
-        path: "orders",
-        select: "-_id -userId amount status",
-      });
+    const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -121,24 +78,10 @@ const deleteUser = async (req, res) => {
   }
 };
 
-const getProducts = async (req, res) => {
-  try {
-    // const data = await Product.find().populate("categoryIds");
-    const data = await Category.find().populate({
-      path: "products",
-      select: "-_id -categoryIds productName price",
-    });
-    res.status(200).json({ message: "Products retrieved successfully", data });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 module.exports = {
   getUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
-  getProducts,
 };

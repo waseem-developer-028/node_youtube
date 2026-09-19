@@ -8,7 +8,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --watch server.js "
+    "start": "node --watch server.js",
+    "build": "vercel build"
   },
   "dependencies": {
     "@faker-js/faker": "^10.6.0",
