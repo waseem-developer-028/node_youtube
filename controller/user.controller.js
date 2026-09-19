@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const User = require("../models/user");
 const { faker } = require("@faker-js/faker");
 
 const getUsers = async (req, res) => {
