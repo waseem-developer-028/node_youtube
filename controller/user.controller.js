@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const { faker } = require("@faker-js/faker");
 
 const getUsers = async (req, res) => {
   let { page = 1 } = req.query;
@@ -7,15 +6,6 @@ const getUsers = async (req, res) => {
     page = parseInt(page) ?? 1;
     const limit = 5;
     const skip = (page - 1) * limit;
-    for (let i = 0; i < 100; i++) {
-      await User.create({
-        name: faker.person.fullName(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-        age: faker.number.int({ min: 18, max: 65 }),
-        city: faker.location.city(),
-      });
-    }
     const users = await User.find().skip(skip).limit(limit);
 
     res
